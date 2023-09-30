@@ -1,0 +1,5 @@
+Django
+django-chunked-upload
+djangorestframework
+mysqlclient
+python-magic-bin
