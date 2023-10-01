@@ -4,3 +4,5 @@ migrations
 videos
 python.exe.stackdump
 bash.exe.stackdump
+__pycache__
+static

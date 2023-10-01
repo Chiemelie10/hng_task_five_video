@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-5@39i^v!)mkqq(e9faxa%2l&l)9_i&k6x+98)*q_7wk*f*#)@g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['hngvideoapi.pythonanywhere.com']
 
 
 # Application definition
