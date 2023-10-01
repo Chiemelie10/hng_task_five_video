@@ -6,3 +6,4 @@ python.exe.stackdump
 bash.exe.stackdump
 __pycache__
 static
+settings.py
