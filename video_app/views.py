@@ -14,8 +14,8 @@ class UploadFile(ChunkedUploadView):
     """This class defines a method for posting video files to the app."""
 
     parser_classes = [FormParser, MultiPartParser]
-    max_bytes = 300 * 1000 * 1000
-    chunk_max_bytes = 30 * 1000 * 1000
+    max_bytes = 100 * 1000 * 1000
+    chunk_max_bytes = 20 * 1000 * 1000
     content_range_header = 'HTTP_CONTENT_RANGE'
     content_range_pattern = re.compile(
         r'^bytes (?P<start>\d+)-(?P<end>\d+)/(?P<total>\d+)$'
