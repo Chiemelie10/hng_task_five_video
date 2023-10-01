@@ -7,8 +7,8 @@ name = "pypi"
 django = "*"
 djangorestframework = "*"
 mysqlclient = "*"
-python-magic-bin = "*"
 django-chunked-upload = "*"
+python-magic-bin = "*"
 
 [dev-packages]
 

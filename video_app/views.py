@@ -1,15 +1,25 @@
 """This module defines class UploadFile"""
 import os
-from rest_framework.parsers import MultiPartParser
+import re
+import magic
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from chunked_upload.views import ChunkedUploadView, ChunkedUploadCompleteView
+from chunked_upload.exceptions import ChunkedUploadError
+from chunked_upload.constants import http_status
 
 
 class UploadFile(ChunkedUploadView):
     """This class defines a method for posting video files to the app."""
 
-    parser_classes = [MultiPartParser]
+    parser_classes = [FormParser, MultiPartParser]
+    max_bytes = 300 * 1000 * 1000
+    chunk_max_bytes = 30 * 1000 * 1000
+    content_range_header = 'HTTP_CONTENT_RANGE'
+    content_range_pattern = re.compile(
+        r'^bytes (?P<start>\d+)-(?P<end>\d+)/(?P<total>\d+)$'
+    )
 
     def check_permissions(self, request):
         """
@@ -18,24 +28,43 @@ class UploadFile(ChunkedUploadView):
         # pylint: disable=unnecessary-pass
         pass
 
-    def get_max_bytes(self, request):
+
+    def validate(self, request):
         """
-        Used to limit the max amount of data that can be uploaded. `None` means
-        no limit.
-        You can override this to have a custom `max_bytes`, e.g. based on
-        logged user.
+        Placeholder method to define extra validation.
+        Must raise ChunkedUploadError if validation fails.
         """
+        file = request.FILES.get('file')
+        if not file:
+            raise ChunkedUploadError(status=http_status.HTTP_400_BAD_REQUEST,
+                                     detail='No chunk file was submitted')
 
-        self.max_bytes = 30 * 1000 * 1000
+        content_range = request.META.get(self.content_range_header, '')
+        match = self.content_range_pattern.match(content_range)
+        if match:
+            start = int(match.group('start'))
+            end = int(match.group('end'))
 
-        return self.max_bytes
+            if end + 1 - start > self.chunk_max_bytes:
+                raise ChunkedUploadError(status=http_status.HTTP_400_BAD_REQUEST,
+                                        detail=f'Chunk size {end + 1 - start} exceeded chunk '\
+                                                f'limit {self.chunk_max_bytes} bytes.')
 
+        upload_id = request.FILES.get('upload_id')
+        acceptable_mimetypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/x-msvideo',
+                                'video/x-matroska', 'video/x-flv', 'video/3gpp']
+
+        if not upload_id:
+            file_mime_type = magic.from_buffer(file.read(1024), mime=True)
+            if file_mime_type not in acceptable_mimetypes:
+                raise ChunkedUploadError(status=http_status.HTTP_400_BAD_REQUEST,
+                                        detail='Unsupported file type')
 
 
 class CompletedUpload(ChunkedUploadCompleteView):
     """This class defines a method for posting video files to the app."""
 
-    parser_classes = [MultiPartParser]
+    parser_classes = [FormParser, MultiPartParser]
     do_md5_check = False
 
     def check_permissions(self, request):

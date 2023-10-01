@@ -1,5 +1,5 @@
-Django
+django
 django-chunked-upload
 djangorestframework
 mysqlclient
-python-magic-bin
+python-magic

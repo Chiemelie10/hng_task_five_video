@@ -2,3 +2,5 @@ media
 .env
 migrations
 videos
+python.exe.stackdump
+bash.exe.stackdump
