@@ -83,11 +83,10 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hng_video_db',
-        'USER': 'hng_backend_dev',
-        'PASSWORD': '@backend_dev#10',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
+        'NAME': 'hngvideoapi$default',
+        'USER': 'hngvideoapi',
+        'PASSWORD': '#@TEssco10',
+        'HOST': 'hngvideoapi.mysql.pythonanywhere-services.com',
     }
 }
 

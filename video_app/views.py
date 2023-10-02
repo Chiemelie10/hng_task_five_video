@@ -107,5 +107,5 @@ class CompletedUpload(ChunkedUploadCompleteView):
             "created_on": chunked_upload.created_on,
             "completed_on": chunked_upload.completed_on,
             "filename": chunked_upload.filename,
-            "url": f"http://{get_current_site(request).domain}{media_url}{chunked_upload.file}"
+            "url": f"https://{get_current_site(request).domain}{media_url}{chunked_upload.file}"
         }
