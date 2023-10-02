@@ -68,7 +68,7 @@ For production deployment, consider using a production-ready web server (e.g., G
 - {"file": <file>}
 
 - request header:
-- Content-Range: <offset>-<file_size - 1>/<total_size>
+- Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
 
 NB: Content-Range can be set for the first request but it is only required if subsequent requests will be made to this endpoint using upload_id that will be sent as response. The value offset for the first request is 0 (zero). file_size is the size of the particular file that will be posted. total_size is file_size if the file was not broken into chunks. If file was broken into chunks, total_size is the file size before the video was broken into chunks. 
 
@@ -88,7 +88,7 @@ Example:
 
 Also set Content-Range in the header before making this request:
 Example:
-Content-Range: <offset>-<file_size - 1>/<total_size>
+Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
 
 NB: Repeat this process until all chunks has been uploaded.
 
@@ -124,7 +124,7 @@ POST http://localhost:8000/api/chunked_upload
 {"file": <file>}
 
 - Request header:
-- Content-Range: <offset>-<file_size - 1>/<total_size>
+- Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
 
 Response (200 OK)
 {
