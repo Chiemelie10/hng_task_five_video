@@ -60,15 +60,17 @@ For production deployment, consider using a production-ready web server (e.g., G
 
 ## Standard Request and Response Format
 
-### POST /api/chunked_upload
+### POST /api/chunked-upload
 **Request to post a video to the database:**
-- accecpts multipart/form-data
+- accepts multipart/form-data
 
 - request body:
-- {"file": <file>}
+
+  {"file": file_to_uploaded}
 
 - request header:
-- Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
+ 
+  Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
 
 NB: 
 - Content-Range can be set for the first request but it is only required if subsequent requests will be made to this endpoint using upload_id that will be sent as response.
@@ -78,114 +80,115 @@ NB:
 - The maximum allowed total_size is 100000000 bytes, that is 100MB.
 - The maximum allowed file_size per upload is 20000000 bytes, that is 20MB.
 
-**Response (200 OK):**
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "offset": 10000,
-    "expires": "2023-10-01T12:50:25.186Z"
-}
+**Response (200 OK):**  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "offset": 10000,  
+    "expires": "2023-10-01T12:50:25.186Z"  
+}  
 
-Repeatedly POST subsequent chunks using the 'upload_id' to identify the upload to the url.
-Example:
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "file": <file>
-}
+Repeatedly POST subsequent chunks using the 'upload_id' to identify the upload to the url.  
+Example:  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "file": file_to_upload  
+}  
 
-Also set Content-Range in the header before making this request:
-Example:
-Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
+Also set Content-Range in the header before making this request:  
+Example:  
+Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>  
 
-NB: Repeat this process until all chunks has been uploaded.
+Repeat this process until all chunks have been uploaded.
 
-### POST /api/completed_upload
+### POST /api/completed-upload
 **Request to inform the server that the upload is complete:**
 
-- Request body:
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-}
+- Request body:  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+}  
 
 - No header required.
 
 **Response (200 OK):**
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "upload_status": 2,
-    "created_on": "2023-10-02T04:11:32.940Z",
-    "completed_on": "2023-10-02T04:12:35.030Z",
-    "filename": "mixkit-group-of-colleagues-brainstorming-in-a-meeting-48713-medium.mp4",
-    "url": "https://hngvideoapi.pythonanywhere.com/media/videos/55035b852f92448e9f99000c7f5c3469.mp4"
+
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_status": 2,  
+    "created_on": "2023-10-02T04:11:32.940Z",  
+    "completed_on": "2023-10-02T04:12:35.030Z",  
+    "filename": "mixkit-group-of-colleagues-brainstorming-in-a-meeting-48713-medium.mp4",  
+    "url": "https://hngvideoapi.pythonanywhere.com/media/videos/55035b852f92448e9f99000c7f5c3469.mp4"  
 }
 
 NB: for upload_status, the value of 2 shows the upload is successful. The video can be watched by clicking on the url returned.
 
 ## Sample API Usage (Based On the assumption that a video was split into two chunks)
-- Other assumptions:
-total_size = 30000000 bytes
-first chunk file_size = 15000000 bytes
-second chunk file_size = 15000000 bytes 
+- Other assumptions:  
+total_size = 30000000 bytes  
+first chunk file_size = 15000000 bytes  
+second chunk file_size = 15000000 bytes  
 
-Upload the first chunk(POST /api/chunked-upload)
-Request:
-POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload
+Upload the first chunk(POST /api/chunked-upload)  
+Request:  
+POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload  
 
-- Request body:
-{"file": <file>}
+- Request body:  
+{"file": file_to_upload}
 
-- Request header:
-- Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
-Based on above assumption Content-Range for first request will be:
-- Content-Range: bytes 0-14999999/30000000
+- Request header:  
+Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>  
+Based on above assumption Content-Range for first request will be:  
+Content-Range: bytes 0-14999999/30000000  
 
-Response (200 OK)
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "offset": 15000000,
-    "expires": "2023-10-01T12:50:25.186Z"
+Response (200 OK)  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "offset": 15000000,  
+    "expires": "2023-10-01T12:50:25.186Z"  
 }
 
-Upload the second chunk(POST /api/chunked-upload)
-Request:
-POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload
+Upload the second chunk(POST /api/chunked-upload)  
+Request:  
+POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload  
 
-- Request body:
-{"file": <file>}
-{"upload_id": 5230ec1f59d1485d9d7974b853802e31}
+- Request body:  
+{"file": file_to_upload}  
+{"upload_id": 5230ec1f59d1485d9d7974b853802e31}  
 
-- Request header:
-- Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
-Based on above assumption Content-Range for second request will be:
-- Content-Range: bytes 15000000-29999999/30000000
+- Request header:  
+Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>  
+Based on above assumption Content-Range for second request will be:  
+- Content-Range: bytes 15000000-29999999/30000000  
 
-Response (200 OK)
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "offset": 30000000,
-    "expires": "2023-10-01T12:50:25.186Z"
-}
+Response (200 OK)  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "offset": 30000000,  
+    "expires": "2023-10-01T12:50:25.186Z"  
+}  
 
 - 
 
-Tell the server the upload is complete (POST /api/completed-upload)
-Request:
-POST https://hngvideoapi.pythonanywhere.com/api/completed-upload
+Tell the server the upload is complete (POST /api/completed-upload)  
+Request:  
+POST https://hngvideoapi.pythonanywhere.com/api/completed-upload  
 
-- Request body:
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
+- Request body:  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
 }
 
 - No header required.
 
-Response (200 OK)
-{
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "upload_status": 2,
-    "created_on": "2023-10-02T04:11:32.940Z",
-    "completed_on": "2023-10-02T04:12:35.030Z",
-    "filename": "mixkit-group-of-colleagues-brainstorming-in-a-meeting-48713-medium.mp4",
-    "url": "https://hngvideoapi.pythonanywhere.com/media/videos/55035b852f92448e9f99000c7f5c3469.mp4"
+Response (200 OK)  
+{  
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_status": 2,  
+    "created_on": "2023-10-02T04:11:32.940Z",  
+    "completed_on": "2023-10-02T04:12:35.030Z",  
+    "filename": "mixkit-group-of-colleagues-brainstorming-in-a-meeting-48713-medium.mp4",  
+    "url": "https://hngvideoapi.pythonanywhere.com/media/videos/55035b852f92448e9f99000c7f5c3469.mp4"  
 }
 
 ## Known Limitations
