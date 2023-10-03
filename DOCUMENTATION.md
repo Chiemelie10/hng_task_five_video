@@ -70,7 +70,13 @@ For production deployment, consider using a production-ready web server (e.g., G
 - request header:
 - Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
 
-NB: Content-Range can be set for the first request but it is only required if subsequent requests will be made to this endpoint using upload_id that will be sent as response. The value offset for the first request is 0 (zero). file_size is the size of the particular file that will be posted. total_size is file_size if the file was not broken into chunks. If file was broken into chunks, total_size is the file size before the video was broken into chunks. 
+NB: 
+- Content-Range can be set for the first request but it is only required if subsequent requests will be made to this endpoint using upload_id that will be sent as response.
+- The value offset for the first request is 0 (zero).
+- file_size is the size of the particular file that will be uploaded.
+- total_size is equal to file_size if the file was not broken into chunks. If file was broken into chunks, total_size is the file size before the video was broken into chunks.
+- The maximum allowed total_size is 100000000 bytes, that is 100MB.
+- The maximum allowed file_size per upload is 20000000 bytes, that is 20MB.
 
 **Response (200 OK):**
 {
@@ -114,28 +120,56 @@ NB: Repeat this process until all chunks has been uploaded.
 
 NB: for upload_status, the value of 2 shows the upload is successful. The video can be watched by clicking on the url returned.
 
-## Sample API Usage
+## Sample API Usage (Based On the assumption that a video was split into two chunks)
+- Other assumptions:
+total_size = 30000000 bytes
+first chunk file_size = 15000000 bytes
+second chunk file_size = 15000000 bytes 
 
-Upload a video (POST /api)
+Upload the first chunk(POST /api/chunked-upload)
 Request:
-POST http://localhost:8000/api/chunked_upload
+POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload
 
 - Request body:
 {"file": <file>}
 
 - Request header:
 - Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
+Based on above assumption Content-Range for first request will be:
+- Content-Range: bytes 0-14999999/30000000
 
 Response (200 OK)
 {
     "upload_id": 5230ec1f59d1485d9d7974b853802e31,
-    "offset": 10000,
+    "offset": 15000000,
     "expires": "2023-10-01T12:50:25.186Z"
 }
 
-Tell server upload is complete (POST /api)
+Upload the second chunk(POST /api/chunked-upload)
 Request:
-POST http://localhost:8000/api/completed_upload
+POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload
+
+- Request body:
+{"file": <file>}
+{"upload_id": 5230ec1f59d1485d9d7974b853802e31}
+
+- Request header:
+- Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>
+Based on above assumption Content-Range for second request will be:
+- Content-Range: bytes 15000000-29999999/30000000
+
+Response (200 OK)
+{
+    "upload_id": 5230ec1f59d1485d9d7974b853802e31,
+    "offset": 30000000,
+    "expires": "2023-10-01T12:50:25.186Z"
+}
+
+- 
+
+Tell the server the upload is complete (POST /api/completed-upload)
+Request:
+POST https://hngvideoapi.pythonanywhere.com/api/completed-upload
 
 - Request body:
 {
