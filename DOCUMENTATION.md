@@ -82,7 +82,7 @@ NB:
 
 **Response (200 OK):**  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
     "offset": 10000,  
     "expires": "2023-10-01T12:50:25.186Z"  
 }  
@@ -90,7 +90,7 @@ NB:
 Repeatedly POST subsequent chunks using the 'upload_id' to identify the upload to the url.  
 Example:  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
     "file": file_to_upload  
 }  
 
@@ -105,7 +105,7 @@ Repeat this process until all chunks have been uploaded.
 
 - Request body:  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
 }  
 
 - No header required.
@@ -113,7 +113,7 @@ Repeat this process until all chunks have been uploaded.
 **Response (200 OK):**
 
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
     "upload_status": 2,  
     "created_on": "2023-10-02T04:11:32.940Z",  
     "completed_on": "2023-10-02T04:12:35.030Z",    
@@ -144,7 +144,7 @@ Content-Range: bytes 0-14999999/30000000
 
 Response (200 OK)  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558/,  
     "offset": 15000000,  
     "expires": "2023-10-01T12:50:25.186Z"  
 }
@@ -155,7 +155,7 @@ POST https://hngvideoapi.pythonanywhere.com/api/chunked-upload
 
 - Request body:  
 {"file": file_to_upload}  
-{"upload_id": 5230ec1f59d1485d9d7974b853802e31}  
+{"upload_id": 7106b836e756403492448f3c25a48558}  
 
 - Request header:  
 Content-Range: bytes <offset>-<offset + file_size - 1>/<total_size>  
@@ -164,7 +164,7 @@ Based on above assumption Content-Range for second request will be:
 
 Response (200 OK)  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
     "offset": 30000000,  
     "expires": "2023-10-01T12:50:25.186Z"  
 }  
@@ -177,21 +177,21 @@ POST https://hngvideoapi.pythonanywhere.com/api/completed-upload
 
 - Request body:  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
 }
 
 - No header required.
 
 Response (200 OK)  
 {  
-    "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
+    "upload_id": 7106b836e756403492448f3c25a48558,  
     "upload_status": 2,  
     "created_on": "2023-10-02T04:11:32.940Z",  
     "completed_on": "2023-10-02T04:12:35.030Z",  
 }
 
 To get this video make a GET request to this endpoint.
-GET https://hngvideoapi.pythonanywhere.com/api/api/videos/5230ec1f59d1485d9d7974b853802e31
+GET https://hngvideoapi.pythonanywhere.com/api/api/videos/7106b836e756403492448f3c25a48558
 
 ## Known Limitations
 - This API does not include authentication or authorization mechanisms. It assumes open access.
