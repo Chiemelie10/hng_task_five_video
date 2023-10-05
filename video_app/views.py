@@ -3,6 +3,7 @@ import os
 import re
 import magic
 # import requests
+import mimetypes
 import openai
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -135,6 +136,7 @@ class StreamVideo(APIView):
         absolute_path = os.path.join(settings.MEDIA_ROOT, f'{relative_path}')
         file_size = os.path.getsize(absolute_path)
         chunk_size = (5 / 100) * file_size
+        mime_type, _ = mimetypes.guess_type(absolute_path)
 
         if os.path.exists(absolute_path):
             def generate():
@@ -144,7 +146,7 @@ class StreamVideo(APIView):
                         if not chunk:
                             break
                         yield chunk
-        response = StreamingHttpResponse(generate(), content_type='video/mp4')
+        response = StreamingHttpResponse(generate(), content_type=mime_type)
         response['Content-Length'] = file_size
 
         return response
