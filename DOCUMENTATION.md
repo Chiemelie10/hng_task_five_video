@@ -116,12 +116,13 @@ Repeat this process until all chunks have been uploaded.
     "upload_id": 5230ec1f59d1485d9d7974b853802e31,  
     "upload_status": 2,  
     "created_on": "2023-10-02T04:11:32.940Z",  
-    "completed_on": "2023-10-02T04:12:35.030Z",  
-    "filename": "mixkit-group-of-colleagues-brainstorming-in-a-meeting-48713-medium.mp4",  
-    "url": "https://hngvideoapi.pythonanywhere.com/media/videos/55035b852f92448e9f99000c7f5c3469.mp4"  
+    "completed_on": "2023-10-02T04:12:35.030Z",    
 }
 
-NB: for upload_status, the value of 2 shows the upload is successful. The video can be watched by clicking on the url returned.
+NB: for upload_status, the value of 2 shows the upload is successful.
+
+At this point a GET request that includes the video id returns the video in chunks.  
+GET https://hngvideoapi.pythonanywhere.com/api/videos/{str:upload_id}
 
 ## Sample API Usage (Based On the assumption that a video was split into two chunks)
 - Other assumptions:  
@@ -187,9 +188,10 @@ Response (200 OK)
     "upload_status": 2,  
     "created_on": "2023-10-02T04:11:32.940Z",  
     "completed_on": "2023-10-02T04:12:35.030Z",  
-    "filename": "mixkit-group-of-colleagues-brainstorming-in-a-meeting-48713-medium.mp4",  
-    "url": "https://hngvideoapi.pythonanywhere.com/media/videos/55035b852f92448e9f99000c7f5c3469.mp4"  
 }
+
+To get this video make a GET request to this endpoint.
+GET https://hngvideoapi.pythonanywhere.com/api/api/videos/5230ec1f59d1485d9d7974b853802e31
 
 ## Known Limitations
 - This API does not include authentication or authorization mechanisms. It assumes open access.
